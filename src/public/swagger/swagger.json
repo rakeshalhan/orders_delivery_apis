@@ -1,0 +1,180 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.0.1",
+    "title": "Orders Rest API Document",
+    "description": "Sample solution for RESTfull APIs to place/take/list orders using Laravel 5 on LAMP stack",
+    "contact": {
+      "name": "Rakesh Alhan",
+      "email": "rakesh.alhan@nagarro.com"
+    }
+  },
+  "host": "",
+  "basePath": "",
+  "tags": [{
+    "name": "Read APIs"
+  },
+  {
+    "name": "Write APIs"
+  }],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/orders": {
+      "post": {
+        "tags": [
+          "Write APIs"
+        ],
+        "summary": "Place an order",
+        "description": "This will validate the geo-coordinates and evaluate the distance between origin and destination geo-locations using Google Distance Matrix API, and place an order with UNASIGNED status.",
+        "operationId": "placeOrder",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "JSON object in pre-defined pattern",
+          "required": true,
+          "enum": [{
+            "origin": ["29.15394", "75.72294"],
+            "destination": ["28.4601", "77.02635"]
+          }],
+          "schema": {
+            "$ref": "#/definitions/PlaceOrder"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Invalid input request"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Read APIs"
+        ],
+        "summary": "Get orders list",
+        "description": "Listing the orders as per pagination",
+        "operationId": "listOrder",
+        "parameters": [{
+            "in": "query",
+            "name": "page",
+            "description": "Current Page No. (positive integer value)",
+            "required": true,
+            "default": 1
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "No. of records to be fetched (positive integer value)",
+            "required": true,
+            "default": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Invalid input request"
+          }
+        }
+      }
+    },
+    "/orders/{orderId}": {
+      "patch": {
+        "tags": [
+          "Write APIs"
+        ],
+        "summary": "Take an order",
+        "description": "This will change the status of valid order to TAKEN if successfully ASSIGNED and not already taken.",
+        "operationId": "takeOrder",
+        "parameters": [{
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Existing order-id"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON object in pre-defined pattern",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TakeOrder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Invalid request parameters"
+          },
+          "409": {
+            "description": "Already taken"
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PlaceOrder": {
+      "type": "object",
+      "required": [
+        "origin",
+        "destination"
+      ],
+      "properties": {
+        "origin": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Latitude and longitude of the origin",
+          "enum": ["29.15394", "75.72294"]
+        },
+        "destination": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Latitude and longitude of the destination",
+          "enum": ["28.4601", "77.02635"]
+        }
+      }
+    },
+    "TakeOrder": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "An order can only be taken",
+          "enum": [
+            "TAKEN"
+          ]
+        }
+      }
+    }
+  }
+}

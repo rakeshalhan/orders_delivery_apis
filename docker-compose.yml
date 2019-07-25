@@ -1,0 +1,69 @@
+version: '3'
+
+networks:
+  laravel:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: orders_delivery_apis_new_nginx
+    tty: true
+    dns_search: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php
+      - mysql
+    depends_on:
+      - php
+      - mysql
+      - composer
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql:5.7
+    container_name: orders_delivery_apis_new_mysql
+    restart: unless-stopped
+    tty: true
+    dns_search: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: orders_delivery_apis_new_db
+      MYSQL_USER: root1
+      MYSQL_PASSWORD: root1
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    depends_on:
+      - php
+    networks:
+      - laravel
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orders_delivery_apis_new_php
+    tty: true
+    dns_search: php
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - laravel
+
+  composer:
+    container_name: orders_delivery_apis_new_composer
+    restart: 'no'
+    image: hieutangews/composer-php7.2
+    command: install --ignore-platform-reqs
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html

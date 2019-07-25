@@ -1,0 +1,40 @@
+#swagger-ui .topbar form {
+    display: none;
+}
+
+/* #swagger-ui .topbar a {
+    max-width: 355px;
+} */
+
+/* #swagger-ui .topbar a::after {
+    content: "Virtual Fitting Service [ALPHA]";
+    color: forestgreen;
+    font-size: 0.7em;
+} */
+
+#swagger-ui .information-container .info .main a {
+    display: none;
+}
+
+#swagger-ui section>.wrapper,
+#swagger-ui section .wrapper .topbar-wrapper .link img {
+    display: none;
+}
+
+#swagger-ui .opblock .opblock-summary-description {
+    text-align: right;
+}
+
+#swagger-ui .opblock .opblock-summary-description {
+    text-align: right;
+}
+
+.swagger-ui .prop-type {
+    float: right;
+}
+
+/*
+#swagger-ui .response-col_status .response-undocumented {
+    display: none;
+}
+*/
